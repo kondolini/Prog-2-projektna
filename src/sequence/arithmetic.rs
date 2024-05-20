@@ -1,16 +1,16 @@
 use super::models::Sequence;
 // Implementirajte artimetično zaporedje
-pub struct Arithmetic <i64> {
-    zacetni : i64,
-    diferenca: i64,
+pub struct Arithmetic <f64> {
+    zacetni : f64,
+    diferenca: f64,
 
 }
 
-impl Sequence<i64> for Arithmetic<i64> {
+impl Sequence<f64> for Arithmetic<f64> {
     fn name(&self) -> String {
         format!("arimetično, z začetnim členom {} in diferenco {}",self.zacetni,self.diferenca)
     }
-    fn contains(&self, item: i64) -> bool {
+    fn contains(&self, item: f64) -> bool {
         let mut count = self.zacetni;
         loop {
             if count > item {
@@ -22,15 +22,15 @@ impl Sequence<i64> for Arithmetic<i64> {
             count += self.diferenca;
         }
     }
-    fn k_th(&self, k: usize) -> Option<i64> {
-        Some(self.zacetni + (self.diferenca)*(k as i64))
+    fn k_th(&self, k: usize) -> Option<f64> {
+        Some(self.zacetni + (self.diferenca)*(k as f64))
     }
-    fn start(&self) -> i64 {
+    fn start(&self) -> f64 {
         self.zacetni
     }
 }
-impl Arithmetic<i64> {
-    pub fn new(x: i64, y: i64) -> Arithmetic<i64> {
+impl Arithmetic<f64> {
+    pub fn new(x: f64, y: f64) -> Arithmetic<f64> {
         Arithmetic {zacetni: x, diferenca: y}
     }
 }
