@@ -1,7 +1,6 @@
 use crate::expression::models::{AExpr, BinaryOperation};
 use crate::expression::{evaluation, models};
 use crate::sequence::arithmetic::Arithmetic;
-use crate::sequence::combined::Combined;
 use crate::sequence::models::Sequence;
 use crate::sequence::constant::Constant;
 
@@ -12,9 +11,9 @@ use std::collections::HashMap;
 
 fn main() {
     // Naredite nekaj zaporedij
-    let s1 = sequence::constant::Constant::new(1);
-    let s2 = sequence::constant::Constant::new(2);
-    let s3 = sequence::arithmetic::Arithmetic::new(0, 10);
+    let s1 = sequence::constant::Constant::new(1.0);
+    let s2 = sequence::constant::Constant::new(2.0);
+    let s3 = sequence::arithmetic::Arithmetic::new(0.0, 10.0);
     // let s4 = sequence::shifted::shifted_sequence(&*s3, 5);
 
     //println!("{}", s3.name());
