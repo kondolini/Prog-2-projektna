@@ -45,6 +45,6 @@ fn yo (){
     let mut list = vec![1,2,3];
     let f = ||println!("tukaj je list {:?}", list);
     f();
-    list.push(4);
+    //list.push(4);
     f()
 }
