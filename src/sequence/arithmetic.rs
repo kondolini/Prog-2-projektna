@@ -1,47 +1,26 @@
 use super::models::Sequence;
 // Implementirajte artimetično zaporedje
-pub struct Arithmetic <f64> {
-    zacetni : f64,
-    diferenca: f64,
-
+pub struct Arithmetic {
+    start: f64,
+    step: f64,
 }
 
-impl Sequence<f64> for Arithmetic<f64> {
-    fn name(&self) -> String {
-        format!("arimetično, z začetnim členom {} in diferenco {}",self.zacetni,self.diferenca)
+impl Arithmetic {
+    pub fn new(start: f64, step: f64) -> Box<Arithmetic> {
+        Box::new(Arithmetic { start, step })
     }
-    fn contains(&self, item: f64) -> bool {
-        if self.diferenca >0.0 {
-        let mut count = self.zacetni;
-        loop {
-            if count > item {
-                return false
-            }
-            if count == item {
-                return true
-            }
-            count += self.diferenca;
+
+    pub fn k_th(&self, k: usize) -> f64 {
+        self.start + (k as f64) * self.step
+    }
+
+    pub fn range(&self, range: Range) -> Vec<f64> {
+        let mut result = Vec::new();
+        let mut k = range.from;
+        while k <= range.to {
+            result.push(self.k_th(k as usize));
+            k += range.step;
         }
-    } else {
-        loop {
-            if count < item {
-                return false
-            }
-            if count == item {
-                return true
-            }
-            count += self.diferenca;
+        result
     }
-    }
-    fn k_th(&self, k: u64) -> Option<f64> {
-        Some(self.zacetni + (self.diferenca)*(k))
-    }
-    fn start(&self) -> f64 {
-        self.zacetni
-    }
-}
-impl Arithmetic<f64> {
-    pub fn new(x: f64, y: f64) -> Arithmetic<f64> {
-        Arithmetic {zacetni: x, diferenca: y}
-    };
 }

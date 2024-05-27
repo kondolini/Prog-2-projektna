@@ -9,37 +9,61 @@ pub mod sequence;
 
 use std::collections::HashMap;
 
-fn main() {
-    // Naredite nekaj zaporedij
-    let s1 = sequence::constant::Constant::new(1.0);
-    let s2 = sequence::constant::Constant::new(2.0);
-    let s3 = sequence::arithmetic::Arithmetic::new(0.0, 10.0);
-    // let s4 = sequence::shifted::shifted_sequence(&*s3, 5);
+use std::net::SocketAddr;
 
-    //println!("{}", s3.name());
+use bytes::Bytes;
+use http_body_util::{combinators::BoxBody, BodyExt, Empty, Full};
+use hyper::body::Incoming;
+use hyper::server::conn::http1;
+use hyper::service::service_fn;
+use hyper::Error;
+use hyper::{body::Body, Method, Request, Response, StatusCode};
+use hyper_util::rt::TokioIo;
+use tokio::net::TcpListener;
 
-    //println!("{:?}", s1.k_th(10));
-    //println!("{:?}", s3.name());
+use serde::{Deserialize, Serialize};
 
-    // Kombinirano zaporedje
+const PORT: u16 = 12345;
 
-    let neki = AExpr::BinOp(
-         Box::new(AExpr::Variable(s3.name())),
-         BinaryOperation::Add,
-         Box::new(AExpr::BinOp(
-             Box::new(AExpr::Num(2)),
-             BinaryOperation::Mul,
-             Box::new(AExpr::Num(3)),
-         )),
-     );
-     println!("{:?}",neki)
+pub mod expression;
+pub mod sequence;
 
-    // Najlažji način, da pravilno zamenjamo tip in ga damo v vector
-    // let s3t: &dyn Sequence<i64> = &*s3_;
-    // let zap = sequence::combined::combined_sequence(vec![Box::new(s3t)], neki);
-
-    // println!("{:?}", zap.k_th(0));
-    // println!("{:?}", zap.k_th(1));
-    // println!("{:?}", zap.k_th(2));
-    // println!("{:?}", zap.name());
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Project {
+    pub name: String,
+    pub ip: String,
+    pub port: u16,
 }
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Range {
+    pub from: u64,
+    pub to: u64,
+    pub step: u64,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SequenceSyntax {
+    pub name: String,
+    pub parameters: Vec<f64>,
+    pub sequences: Vec<Box<SequenceSyntax>>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SequenceRequest {
+    pub range: Range,
+    pub parameters: Vec<f64>,
+    pub sequences: Vec<Box<SequenceSyntax>>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SequenceInfo {
+    name: String,
+    description: String,
+    parameters: u32,
+    sequences: u32,
+}
+
+
+
+fn main() {}
