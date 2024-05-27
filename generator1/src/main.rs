@@ -87,6 +87,16 @@ fn get_project() -> Project {
     };
 }
 
+fn get_sequence(Sequence) -> SequenceInfo {
+    return SequenceInfo {
+    name: Sequence.name,
+    description: ("To je zaporedje {}", Sequence.name)
+    parameters: 2,
+    sequences: 1,
+
+    }
+}
+
 
 
 fn main() {}
