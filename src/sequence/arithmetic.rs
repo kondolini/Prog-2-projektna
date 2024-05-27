@@ -1,4 +1,5 @@
 use super::models::Sequence;
+use crate::Range;
 // Implementirajte artimetično zaporedje
 pub struct Arithmetic {
     start: f64,

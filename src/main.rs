@@ -25,8 +25,7 @@ use serde::{Deserialize, Serialize};
 
 const PORT: u16 = 12345;
 
-pub mod expression;
-pub mod sequence;
+
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Project {
@@ -63,7 +62,6 @@ pub struct SequenceInfo {
     parameters: u32,
     sequences: u32,
 }
-
 
 
 fn main() {}
