@@ -63,5 +63,30 @@ pub struct SequenceInfo {
     sequences: u32,
 }
 
+fn sequences() -> Vec<SequenceInfo> {
+    let mut sequences = Vec::new();
+    sequences.push(SequenceInfo {
+        name: "Arithmetic".to_string(),
+        description: "Arithmetic sequence".to_string(),
+        parameters: 2,
+        sequences: 0,
+    });
+    sequences.push(SequenceInfo {
+        name: "Lin Comb".to_string(),
+        description: "".to_string(),
+        parameters: 3,
+        sequences: 2,
+    });
+    sequences
+}
+fn get_project() -> Project {
+    return Project {
+        name: "Anže & Enej".to_string(),
+        ip: "0.0.0.0".to_string(),
+        port: PORT,
+    };
+}
+
+
 
 fn main() {}
