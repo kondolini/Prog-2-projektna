@@ -14,7 +14,7 @@ impl<S: Sequence<f64>> Drop<S>
     pub fn new(sequence: S, count: usize) -> Drop<S> {
         Drop { sequence, count }
     }
-
+   
     
     pub fn k_th(&self, k: usize) -> f64 {         
         self.sequence.k_th(k + self.count)
