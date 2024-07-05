@@ -31,13 +31,3 @@ impl Geometric {
     }
 }
 
-// Primer uporabe
-fn main() {
-    let geometric_sequence = Geometric::new(1.0, 2.0); // Začnite z 1 in kvocientom 2
-    let range = Range { from: 0, to: 10, step: 1 };
-
-    let sequence = geometric_sequence.range(range);
-    for value in sequence {
-        println!("{}", value);
-    }
-}
