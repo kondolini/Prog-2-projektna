@@ -9,3 +9,4 @@ pub mod linear;
 pub mod potenca;
 pub mod log;
 pub mod rand;
+pub mod operacije;
