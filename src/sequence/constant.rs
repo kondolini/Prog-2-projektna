@@ -1,13 +1,13 @@
-use crate::sequence::models::Sequence;
-use std::any::type_name;
+use super::models::Sequence;
+use crate::Range;
 
 
-pub struct Constant <f64> {
+pub struct Constant {
     vrednost : f64,
 
 }
 
-impl Sequence<f64> for Constant<f64> {
+impl Constant {
     fn name(&self) -> String {
         format!("Const: {}",self.vrednost)
     }
@@ -17,17 +17,22 @@ impl Sequence<f64> for Constant<f64> {
         }
         else {false}
     }
-    fn k_th(&self, k: usize) -> f64 {
+    fn k_th(&self, k: u64) -> f64 {
         self.vrednost
     }
     fn start(&self) -> f64 {
         self.vrednost
     }
-}
-impl Constant<f64> {
-    pub fn new(x: f64) -> Constant<f64> {
-        Constant {vrednost: x}
+    fn range(&self, range: Range) -> Vec<f64> {
+        let mut result = Vec::new();
+        let mut k = range.from;
+        while k <= range.to {
+            result.push(self.k_th(k));
+            k += range.step;
+        }
+        result
     }
 }
+
 
 
