@@ -90,6 +90,24 @@ fn sequences() -> Vec<SequenceInfo> {
         parameters: 3,
         sequences: 2,
     });
+    sequences.push(SequenceInfo {
+        name: "Constant".to_string(),
+        description: "Constant sequence".to_string(),
+        parameters: 1,
+        sequences: 0,
+    });
+    sequences.push(SequenceInfo {
+        name: "Product".to_string(),
+        description: "Product of sequences".to_string(),
+        parameters: 0,
+        sequences: 2,
+    });
+    sequences.push(SequenceInfo {
+        name: "Geometric".to_string(),
+        description: "Geometric sequence".to_string(),
+        parameters: 2,
+        sequences: 0,
+    });
     sequences
 }
 fn get_project() -> Project {
