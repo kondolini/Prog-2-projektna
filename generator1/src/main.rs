@@ -73,7 +73,7 @@ pub struct SequenceRequest {
     pub sequences: Vec<Box<SequenceSyntax>>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug,Clone)]
 pub struct SequenceInfo {
     name: String,
     description: String,
@@ -92,7 +92,7 @@ fn sequences() -> Vec<SequenceInfo> {
     sequences.push(SequenceInfo {
         name: "Lin Comb".to_string(),
         description: "".to_string(),
-        parameters: 3,
+        parameters: 2,
         sequences: 2,
     });
     sequences.push(SequenceInfo {
@@ -113,6 +113,36 @@ fn sequences() -> Vec<SequenceInfo> {
         parameters: 2,
         sequences: 0,
     });
+    sequences.push(SequenceInfo {
+        name: "logaritemski".to_string(),
+        description: "Logarithmic sequence".to_string(),
+        parameters: 0,
+        sequences: 2,
+    });
+    sequences.push(SequenceInfo {
+        name: "potenca".to_string(),
+        description: "Exponential sequence".to_string(),
+        parameters: 0,
+        sequences: 2,
+    });
+    sequences.push(SequenceInfo {
+        name: "Operacije".to_string(),
+        description: "Operation sequence".to_string(),
+        parameters: 2,
+        sequences: 3,
+    });
+    sequences.push(SequenceInfo {
+        name: "Random".to_string(),
+        description: "Random sequence".to_string(),
+        parameters: 1,
+        sequences: 2,
+    });
+    sequences.push(SequenceInfo {
+        name: "Drop".to_string(),
+        description: "Drop sequence".to_string(),
+        parameters: 1,
+        sequences: 1,
+    });
     sequences
 }
 fn get_project() -> Project {
@@ -123,14 +153,8 @@ fn get_project() -> Project {
     };
 }
 
-fn get_sequence(sequence: &dyn Sequence<f64>) -> SequenceInfo {
-    return SequenceInfo {
-    name: sequence.name().clone(),
-    description: format!("To je zaporedje {}", sequence.name()),
-    parameters: 2,
-    sequences: 1,
-
-    }
+fn get_sequence(sequence_name: &str) -> Option<SequenceInfo> {
+    sequences().iter().find(|&seq| seq.name == sequence_name).cloned()
 }
 
 fn full<T: Into<Bytes>>(chunk: T) -> BoxBody<Bytes, hyper::Error> {
