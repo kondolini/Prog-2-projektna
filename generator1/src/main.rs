@@ -210,5 +210,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         });
     }
+    let seq = Arithmetic::new(0.0, 1.0);
+    let range = Range { from: 0, to: 5, step: 1 };
+    let result = seq.range(range);
+    println!("{:?},aaaaaaaaaa", result);
 }
 
