@@ -3,6 +3,9 @@ use crate::expression::{evaluation, models};
 use crate::sequence::arithmetic::Arithmetic;
 use crate::sequence::models::Sequence;
 use crate::sequence::constant::Constant;
+use crate::sequence::geometric::Geometric;
+use crate::sequence::prod::Produkt;
+
 
 use std::env;
 use std::net::SocketAddr;
@@ -230,5 +233,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         });
     }
-}
+    
+    }
 

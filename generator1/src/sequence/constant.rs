@@ -1,7 +1,7 @@
 use crate::sequence::models::Sequence;
 use std::any::type_name;
 
-// Implementirajte konstantno zaporedje
+
 pub struct Constant <f64> {
     vrednost : f64,
 
@@ -17,8 +17,8 @@ impl Sequence<f64> for Constant<f64> {
         }
         else {false}
     }
-    fn k_th(&self, k: usize) -> Option<f64> {
-        Some(self.vrednost)
+    fn k_th(&self, k: usize) -> f64 {
+        self.vrednost
     }
     fn start(&self) -> f64 {
         self.vrednost
