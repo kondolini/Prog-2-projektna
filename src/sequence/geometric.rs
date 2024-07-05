@@ -1,36 +1,43 @@
 use super::models::Sequence;
 // Implementirajte geometrijsko zaporedje
-pub struct Geometric <f64> {
-    zacetni : f64,
-    kolicnik: f64,
+use crate::Range;
 
+// Definirajte strukturo Geometric brez Box
+pub struct Geometric {
+    zac_clen: f64,
+    kvocient: f64,
 }
 
-impl Sequence<f64> for Geometric<f64> {
-    fn name(&self) -> String {
-        format!("geometrijsko, z začetnim členom {} in količnikom {}",self.zacetni,self.kolicnik)
+impl Geometric {
+    // Konstruktor za ustvarjanje novega geometrijskega zaporedja
+    pub fn new(zac_clen: f64, kvocient: f64) -> Geometric {
+        Geometric { zac_clen, kvocient }
     }
-    fn contains(&self, item: f64) -> bool {
-        let mut count = self.zacetni;
-        loop {
-            if count > item {
-                return false
-            }
-            if count == item {
-                return true
-            }
-            count += self.diferenca;
+
+    // Metoda za pridobitev k-tega člena zaporedja
+    pub fn k_th(&self, k: usize) -> f64 {
+        self.zac_clen * self.kvocient.powi(k as i32)
+    }
+
+    // Metoda za pridobitev zaporedja v določenem razponu
+    pub fn range(&self, range: Range) -> Vec<f64> {
+        let mut result = Vec::new();
+        let mut k = range.from;
+        while k <= range.to {
+            result.push(self.k_th(k as usize));
+            k += range.step;
         }
-    }
-    fn k_th(&self, k: usize) -> Option<f64> {
-        Some(self.zacetni * (self.kolicnik).pow(k))
-    }
-    fn start(&self) -> f64 {
-        self.zacetni
+        result
     }
 }
-impl Geometric<f64> {
-    pub fn new(x: f64, y: f64) -> Geometric<f64> {
-        Geometric {zacetni: x, kolicnik: y}
+
+// Primer uporabe
+fn main() {
+    let geometric_sequence = Geometric::new(1.0, 2.0); // Začnite z 1 in kvocientom 2
+    let range = Range { from: 0, to: 10, step: 1 };
+
+    let sequence = geometric_sequence.range(range);
+    for value in sequence {
+        println!("{}", value);
     }
 }
