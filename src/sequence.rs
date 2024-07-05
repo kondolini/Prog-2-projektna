@@ -7,3 +7,4 @@ pub mod prod;
 pub mod drop;
 pub mod linear;
 pub mod potenca;
+pub mod log;
