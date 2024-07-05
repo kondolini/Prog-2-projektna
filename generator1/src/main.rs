@@ -9,6 +9,7 @@ use crate::sequence::drop::Drop;
 use crate::sequence::linear::LinearCombination;
 use crate::sequence::potenca::PowerSequence;
 use crate::sequence::log::LogSequence;
+use crate::sequence::rand::ProbabilisticSequence;
 
 
 use std::env;
