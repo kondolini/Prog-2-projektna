@@ -6,3 +6,4 @@ pub mod geometric;
 pub mod prod;
 pub mod drop;
 pub mod linear;
+pub mod potenca;
