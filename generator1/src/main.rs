@@ -87,10 +87,10 @@ fn get_project() -> Project {
     };
 }
 
-fn get_sequence(Sequence) -> SequenceInfo {
+fn get_sequence(sequence: &dyn Sequence<f64>) -> SequenceInfo {
     return SequenceInfo {
-    name: Sequence.name,
-    description: ("To je zaporedje {}", Sequence.name)
+    name: sequence.name().clone(),
+    description: format!("To je zaporedje {}", sequence.name()),
     parameters: 2,
     sequences: 1,
 
