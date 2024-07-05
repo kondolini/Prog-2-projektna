@@ -7,7 +7,7 @@ pub struct Drop<S> {
 }
 
 
-impl<Sequence<f64> Drop<Sequence<f64> 
+impl<S: Sequence<f64>> Drop<S>
 
 {
     
@@ -24,8 +24,8 @@ impl<Sequence<f64> Drop<Sequence<f64>
     
     pub fn range(&self, range: Range) -> Vec<f64> {
         let mut result = Vec::new();
-        let mut k = range.from + self.count;
-        while k <= range.to + self.count {
+        let mut k = range.from + self.count as u64;
+        while k <= range.to + self.count as u64{
             result.push(self.sequence.k_th(k as usize));
             k += range.step;
         }
