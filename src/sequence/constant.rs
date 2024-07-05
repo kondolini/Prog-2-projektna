@@ -8,9 +8,7 @@ pub struct Constant {
 }
 
 impl Constant {
-    fn name(&self) -> String {
-        format!("Const: {}",self.vrednost)
-    }
+   
     fn contains(&self, item: f64) -> bool {
         if item == self.vrednost {
             true
