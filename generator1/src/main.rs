@@ -7,6 +7,7 @@ use crate::sequence::constant::Constant;
 use std::env;
 use std::net::SocketAddr;
 use std::sync::Arc;
+use std::convert::Infallible;
 
 pub mod expression;
 pub mod sequence;
@@ -26,6 +27,9 @@ use hyper_util::rt::TokioIo;
 use tokio::net::TcpListener;
 
 use serde::{Deserialize, Serialize};
+use serde_json::json;
+
+
 
 const DEFAULT_PORT: u16 = 9000;
 const DEFAULT_IP: &str = "0.0.0.0";
@@ -144,56 +148,9 @@ async fn register_with_central_register(register_ip: &str, project: &Project) ->
     Ok(())
 }
 
-async fn handle_request(req: Request<dyn Body>) -> Result<Response<Body>, hyper::Error> {
-    match (req.method(), req.uri().path()) {
-        (&Method::GET, "/ping/") => {
-            // Simuliramo vračanje registracijskih podatkov
-            let project_info = json!({
-                "name": "Ime skupine",
-                "ip": "192.168.2.1",
-                "port": 12345,
-            });
-            Ok(Response::new(Body::from(project_info.to_string())))
-        },
-        (&Method::GET, "/sequence/") => {
-            // Simuliramo vrnitev podpiranih zaporedij
-            let sequence_infos = vec![
-                SequenceInfo {
-                    name: "fib".to_string(),
-                    description: "Fibonacci sequence starting with `a` and `b`".to_string(),
-                    parameters: 2,
-                    sequences: 0,
-                },
-                SequenceInfo {
-                    name: "lin_comb".to_string(),
-                    description: "Linear combination of two sequences `a` and `b`".to_string(),
-                    parameters: 3,
-                    sequences: 2,
-                },
-            ];
-            let response = json!(sequence_infos);
-            Ok(Response::new(Body::from(response.to_string())))
-        },
-        (&Method::POST, path) if path.starts_with("/sequence/") => {
-            // V obdelavi POST zahtevka za zaporedja
-            // Preberi telo zahtevka
-            let body_bytes = hyper::body::to_bytes(req.into_body()).await?;
-            let request: SequenceRequest = serde_json::from_slice(&body_bytes).map_err(|e| {
-                eprintln!("Failed to parse request body: {:?}", e);
-                hyper::Error::from(e)
-            })?;
-            
-            // Tukaj bi obdelali zaporedje na osnovi zahtev
-            // Trenutno vrnemo samo placeholder odgovor
-            let response_body = json!([1.0, 2.0, 3.0, 4.0, 5.0]);
-            Ok(Response::new(Body::from(response_body.to_string())))
-        },
-        _ => {
-            // Vse druge poti ali metode vrnejo 404 Not Found
-            Ok(Response::new(Body::from("Not Found")))
-        }
-    }
-}
+
+
+
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
