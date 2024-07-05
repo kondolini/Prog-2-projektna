@@ -1,17 +1,17 @@
 use crate::Range;
 use super::models::Sequence;
 
-pub struct Drop<S> {
-    sequence: S,     
+pub struct Drop<'a,S> {
+    sequence: &'a S,     
     count: usize,    
 }
 
 
-impl<S: Sequence<f64>> Drop<S>
+impl<'a, S: Sequence<f64>> Drop<'_, S>
 
 {
     
-    pub fn new(sequence: S, count: usize) -> Drop<S> {
+    pub fn new(sequence: &'a S, count: usize) -> Drop<'a, S> {
         Drop { sequence, count }
     }
    
