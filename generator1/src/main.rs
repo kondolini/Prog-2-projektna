@@ -41,7 +41,7 @@ use serde_json::json;
 
 
 const DEFAULT_PORT: u16 = 9000;
-const DEFAULT_IP: &str = "0.0.0.0";
+const DEFAULT_IP: &str = "127.0.0.1";
 
 
 
@@ -148,7 +148,7 @@ fn sequences() -> Vec<SequenceInfo> {
 fn get_project() -> Project {
     return Project {
         name: "Anže & Enej".to_string(),
-        ip: "0.0.0.0".to_string(),
+        ip: "127.0.0.1".to_string(),
         port: DEFAULT_PORT,
     };
 }
@@ -205,20 +205,21 @@ async fn register_with_central_register(register_ip: &str, project: &Project) ->
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args: Vec<String> = env::args().collect();
-    if args.len() < 3 {
-        println!("Usage: cargo run -- IP_REGISTRA IP_GENERATORJA PORT");
-        return Ok(());
-    }
+    let addr: SocketAddr = ([127, 0, 0, 1], 9000).into();
 
-    let register_ip = &args[1];
-    let generator_ip = if args.len() > 2 { &args[2] } else { DEFAULT_IP };
-    let port: u16 = if args.len() > 3 { args[3].parse().unwrap_or(DEFAULT_PORT) } else { DEFAULT_PORT };
+    let b = send_get("http://127.0.0.1:7878/project".to_string()).await?;
+    println!("HERE {}", b);
 
-    let project = Arc::new(get_project());
-    register_with_central_register(register_ip, &project).await?;
+    let b = send_post(
+        "http://127.0.0.1:7878/project".to_string(),
+        serde_json::to_string(&get_project()).unwrap(),
+    )
+    .await?;
+    println!("HERE {}", b);
 
-    let addr: SocketAddr = (generator_ip.parse::<std::net::IpAddr>()?, port).into();
+    let b = send_get("http://127.0.0.1:7878".to_string()).await?;
+    println!("HERE {}", b);
+
     let listener = TcpListener::bind(addr).await?;
     println!("Listening on http://{}", addr);
 
@@ -231,17 +232,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     loop {
         let (stream, _) = listener.accept().await?;
         let io = TokioIo::new(stream);
-        let project = Arc::clone(&project);
 
         tokio::task::spawn(async move {
             let service = service_fn(move |req| {
-                let project = Arc::clone(&project);
                 async move {
                     match (req.method(), req.uri().path()) {
                         (&Method::GET, "/ping") => Ok::<_, Error>(Response::new(full(
-                            serde_json::to_string(&*project).unwrap(),
+                            serde_json::to_string(&get_project()).unwrap(),
                         ))),
                         (&Method::GET, "/sequence") => {
+                            //
                             let sequences = sequences();
                             Ok(Response::new(full(
                                 serde_json::to_string(&sequences).unwrap(),
@@ -281,6 +281,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         });
     }
-    
-    }
-
+}
