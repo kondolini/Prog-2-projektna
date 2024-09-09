@@ -266,7 +266,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     Ok(Response::new(full(
                                         serde_json::to_string(&seq.range(range)).unwrap(),
                                     )))
-                                }
+                                }, 
+                                Some(s) if *s.name == "Geometric".to_string() =>{
+                                    let body = collect_body(req).await?;
+                                    let request: SequenceRequest =
+                                        serde_json::from_str(&body).unwrap();s
+                                    let range = request.range;
+                                    let seq = Geometric::new(
+                                        request.parameters[0],
+                                        request.parameters[1],
+                                    );
+                                    Ok(Response::new(full(
+                                        serde_json::to_string(&seq.range(range)).unwrap(),
+                                    )))
+                                }, 
                                 _ => panic!("Not implemented"),
                             }
                         }
