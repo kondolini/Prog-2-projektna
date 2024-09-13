@@ -270,7 +270,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 Some(s) if *s.name == "Geometric".to_string() =>{
                                     let body = collect_body(req).await?;
                                     let request: SequenceRequest =
-                                        serde_json::from_str(&body).unwrap();s
+                                        serde_json::from_str(&body).unwrap();s;
                                     let range = request.range;
                                     let seq = Geometric::new(
                                         request.parameters[0],
