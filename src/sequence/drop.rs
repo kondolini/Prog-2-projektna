@@ -1,18 +1,19 @@
 use crate::Range;
 use super::models::Sequence;
 
-pub struct Drop<'a,S> {
-    sequence: &'a S,     
-    count: usize,    
+pub struct Drop {
+    name: String,
+    sequence: Box<dyn Sequence<f64>>,     
+    count: usize,
 }
 
 
-impl<'a, S: Sequence<f64>> Drop<'_, S>
+impl Drop
 
 {
     
-    pub fn new(sequence: &'a S, count: usize) -> Drop<'a, S> {
-        Drop { sequence, count }
+    pub fn new(name:String,sequence: Box<dyn Sequence<f64>>, count: usize) -> Drop {
+        Drop { name, sequence, count }
     }
    
     
@@ -33,4 +34,18 @@ impl<'a, S: Sequence<f64>> Drop<'_, S>
     }
 }
 
+impl Sequence<f64> for Drop {
+    fn k_th(&self, k: usize) -> f64 {
+        self.sequence.k_th(k + self.count)
+    }
+
+    fn name(&self) -> String {
+        self.name.to_string()
+    }
+
+    fn start(&self) -> f64 {
+        self.k_th(0)
+    }
+
+}
 

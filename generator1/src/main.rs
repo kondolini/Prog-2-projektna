@@ -203,6 +203,7 @@ async fn register_with_central_register(register_ip: &str, project: &Project) ->
 
 pub fn build_sequence_from_syntax(syntax: &SequenceSyntax) -> Box<dyn Sequence<f64>> {
     match syntax.name.as_str() {
+        "Arithmetic" => Box::new(Arithmetic::new("Arithmetic".to_string(),syntax.parameters[0],syntax.parameters[1])),
         "Geometric" => Box::new(Geometric::new("Geometric".to_string(),syntax.parameters[0], syntax.parameters[1])),
         "Lin_Comb" => { 
             Box::new(LinearCombination::new(
@@ -211,9 +212,15 @@ pub fn build_sequence_from_syntax(syntax: &SequenceSyntax) -> Box<dyn Sequence<f
                 build_sequence_from_syntax(&*syntax.sequences[1]),
                 syntax.parameters[0],
                 syntax.parameters[1],
-            ))  // Pass ownership of seq1 and seq2
+            )) 
         }
-        // Add cases for other sequence types as needed
+        "Drop" => { 
+            Box::new(Drop::new(
+                syntax.name.clone(),
+                build_sequence_from_syntax(&*syntax.sequences[0]),
+                syntax.parameters[0] as usize,
+            )) 
+        },
         _ => panic!("Unknown sequence type: {}", syntax.name),
     }
 }
@@ -279,6 +286,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         serde_json::from_str(&body).unwrap();
                                     let range = request.range;
                                     let seq = Arithmetic::new(
+                                        "Arithmetic".to_string(),
                                         request.parameters[0],
                                         request.parameters[1],
                                     );
@@ -315,6 +323,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         seq2,
                                         request.parameters[0], 
                                         request.parameters[1],  
+                                    );
+                                
+                                    // Return the result as a response
+                                    Ok(Response::new(full(
+                                        serde_json::to_string(&seq.range(range)).unwrap(),
+                                    )))
+                                }
+                                Some(s) if *s.name == "Drop".to_string() => {
+                                    let body = collect_body(req).await?;
+                                    let request: SequenceRequest = serde_json::from_str(&body).unwrap();
+                                    let range = request.range;
+                                
+                                    // Convert the request sequences to concrete types
+                                    let seq1 = build_sequence_from_syntax(&request.sequences[0]);;
+                                
+                                    let seq = Drop::new(
+                                        "Drop".to_string(),
+                                        seq1,
+                                        request.parameters[0] as usize,  
                                     );
                                 
                                     // Return the result as a response

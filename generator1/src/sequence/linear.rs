@@ -35,7 +35,7 @@ impl LinearCombination {
     }
 }
 
-// Implement the Sequence<f64> trait for LinearCombination
+
 impl Sequence<f64> for LinearCombination {
     fn k_th(&self, k: usize) -> f64 {
         self.a * self.seq1.k_th(k) + self.b * self.seq2.k_th(k)
@@ -47,14 +47,5 @@ impl Sequence<f64> for LinearCombination {
 
     fn start(&self) -> f64 {
         self.k_th(0)
-    }
-
-    fn contains(&self, value: f64) -> bool {
-        for k in 0..1000 {
-            if (self.k_th(k) - value).abs() ==0. {
-                return true;
-            }
-        }
-        false
     }
 }

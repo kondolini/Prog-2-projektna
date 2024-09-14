@@ -12,6 +12,4 @@ pub trait Sequence<T> {
 
     fn k_th(&self, k: usize) -> f64;
 
-    fn contains(&self, item: T) -> bool;
-
 }

@@ -46,8 +46,5 @@ impl Sequence<f64> for Geometric {
         self.k_th(0)
     }
 
-    fn contains(&self, value: f64) -> bool {
-        true
-    }
 }
 
