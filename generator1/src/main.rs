@@ -61,7 +61,7 @@ pub struct Range {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SequenceSyntax {
-    pub name: String,
+    pub name:  String,
     pub parameters: Vec<f64>,
     pub sequences: Vec<Box<SequenceSyntax>>,
 }
@@ -90,7 +90,7 @@ fn sequences() -> Vec<SequenceInfo> {
         sequences: 0,
     });
     sequences.push(SequenceInfo {
-        name: "Lin Comb".to_string(),
+        name: "Lin_Comb".to_string(),
         description: "".to_string(),
         parameters: 2,
         sequences: 2,
@@ -171,8 +171,10 @@ async fn collect_body(req: Request<Incoming>) -> Result<String, hyper::Error> {
 
     let whole_body = req.collect().await?.to_bytes();
     let whole_body = std::str::from_utf8(&whole_body).unwrap().to_string();
-    return Ok(whole_body);
+    println!("Received body: {}", whole_body); // Debugging line
+    Ok(whole_body)
 }
+
 
 fn empty() -> BoxBody<Bytes, hyper::Error> {
     Empty::<Bytes>::new()
@@ -199,6 +201,22 @@ async fn register_with_central_register(register_ip: &str, project: &Project) ->
     Ok(())
 }
 
+pub fn build_sequence_from_syntax(syntax: &SequenceSyntax) -> Box<dyn Sequence<f64>> {
+    match syntax.name.as_str() {
+        "Geometric" => Box::new(Geometric::new("Geometric".to_string(),syntax.parameters[0], syntax.parameters[1])),
+        "Lin_Comb" => { 
+            Box::new(LinearCombination::new(
+                syntax.name.clone(),
+                build_sequence_from_syntax(&*syntax.sequences[0]),
+                build_sequence_from_syntax(&*syntax.sequences[1]),
+                syntax.parameters[0],
+                syntax.parameters[1],
+            ))  // Pass ownership of seq1 and seq2
+        }
+        // Add cases for other sequence types as needed
+        _ => panic!("Unknown sequence type: {}", syntax.name),
+    }
+}
 
 
 
@@ -248,12 +266,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             )))
                         }
                         (&Method::POST, r) => {
+                            println!("Received POST request to path: {}", r);
                             let seqs = sequences();
                             let sequences = seqs
                                 .iter()
                                 .find(|&x| ("/sequence/".to_string() + &x.name) == r);
                             match sequences {
-                                None => create_404(),
+                                None => {println!("path not found: {}", r); create_404()},
                                 Some(s) if *s.name == "Arithmetic".to_string() => {
                                     let body = collect_body(req).await?;
                                     let request: SequenceRequest =
@@ -273,14 +292,37 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         serde_json::from_str(&body).unwrap();s;
                                     let range = request.range;
                                     let seq = Geometric::new(
+                                        "Geometric".to_string(),
                                         request.parameters[0],
                                         request.parameters[1],
                                     );
                                     Ok(Response::new(full(
                                         serde_json::to_string(&seq.range(range)).unwrap(),
                                     )))
-                                }, 
-                                _ => panic!("Not implemented"),
+                                },
+                                Some(s) if *s.name == "Lin_Comb".to_string() => {
+                                    let body = collect_body(req).await?;
+                                    let request: SequenceRequest = serde_json::from_str(&body).unwrap();
+                                    let range = request.range;
+                                
+                                    // Convert the request sequences to concrete types
+                                    let seq1 = build_sequence_from_syntax(&request.sequences[0]);
+                                    let seq2 = build_sequence_from_syntax(&request.sequences[1]);
+                                
+                                    let seq = LinearCombination::new(
+                                        "Lin_Comb".to_string(),
+                                        seq1, 
+                                        seq2,
+                                        request.parameters[0], 
+                                        request.parameters[1],  
+                                    );
+                                
+                                    // Return the result as a response
+                                    Ok(Response::new(full(
+                                        serde_json::to_string(&seq.range(range)).unwrap(),
+                                    )))
+                                }
+                                _ => {println!("Not implemented for path: {}", r);panic!("Not implemented")},
                             }
                         }
 

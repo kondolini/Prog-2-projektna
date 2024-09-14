@@ -1,3 +1,5 @@
+use std::string;
+
 use super::models::Sequence;
 use crate::Range;
 
@@ -5,23 +7,24 @@ use crate::Range;
 
 
 
-pub struct LinearCombination<'a, S1, S2> {
-    seq1: &'a S1,
-    seq2: &'a S2,
-    a: f64,
-    b: f64,
+pub struct LinearCombination {
+    name: String,                 
+    seq1: Box<dyn Sequence<f64>>, 
+    seq2: Box<dyn Sequence<f64>>, 
+    a: f64,                       
+    b: f64,                       
 }
 
-impl<'a, S1: Sequence<f64>, S2: Sequence<f64>> LinearCombination<'a, S1, S2> {
-    fn new(seq1: &'a S1, seq2: &'a S2, a: f64, b: f64) -> LinearCombination<'a, S1, S2> {
-        LinearCombination { seq1, seq2, a, b }
+impl LinearCombination {
+    pub fn new(name:String, seq1: Box<dyn Sequence<f64>>, seq2: Box<dyn Sequence<f64>>, a: f64, b: f64) -> LinearCombination {
+        LinearCombination {name, seq1, seq2, a, b }
     }
 
-    fn k_th(&self, k: usize) -> f64 {
+    pub fn k_th(&self, k: usize) -> f64 {
         self.a * self.seq1.k_th(k) + self.b * self.seq2.k_th(k)
     }
 
-    fn range(&self, range: Range) -> Vec<f64> {
+    pub fn range(&self, range: Range) -> Vec<f64> {
         let mut result = Vec::new();
         let mut k = range.from;
         while k <= range.to {
@@ -29,5 +32,29 @@ impl<'a, S1: Sequence<f64>, S2: Sequence<f64>> LinearCombination<'a, S1, S2> {
             k += range.step;
         }
         result
+    }
+}
+
+// Implement the Sequence<f64> trait for LinearCombination
+impl Sequence<f64> for LinearCombination {
+    fn k_th(&self, k: usize) -> f64 {
+        self.a * self.seq1.k_th(k) + self.b * self.seq2.k_th(k)
+    }
+
+    fn name(&self) -> String {
+        self.name.to_string()
+    }
+
+    fn start(&self) -> f64 {
+        self.k_th(0)
+    }
+
+    fn contains(&self, value: f64) -> bool {
+        for k in 0..1000 {
+            if (self.k_th(k) - value).abs() ==0. {
+                return true;
+            }
+        }
+        false
     }
 }

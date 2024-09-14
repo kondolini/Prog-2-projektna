@@ -6,35 +6,35 @@ for j in projects:
         url = "http://" + j["ip"] + ":" + str(j["port"]) + "/sequence"
         print(url)
         seqs = requests.get(url).json()
-        assert "Geometric" in [j["name"] for j in seqs]
         k = 1
         z = 0.5
         for j in range(10):
             body = {
                 "range": {
-                    "from": j * 100,
-                    "to": (j + 1) * 100,
+                    "from": j * 10,
+                    "to": (j + 1) * 10,
                     "step": 1,
                 },
                 "parameters": [2, 0.5],
-                "sequences": [
-                ],
+                "sequences": [],
             }
             r = requests.post(url + "/Geometric", json=body)
-            body ={
+            body = {
                 "range": {
-                    "from": j * 100,
-                    "to": (j + 1) * 100,
+                    "from": j * 10,
+                    "to": (j + 1) * 10,
                     "step": 1,
                 },
-                "parameters": [2, 0.5],
+                "parameters": [2, 6],
                 "sequences": [
+                    {"name": "Geometric", "parameters": [2, 3], "sequences": []},
+                    {"name": "Geometric", "parameters": [5, 1], "sequences": []}
                 ],
             }
-            # print(r)
+            r = requests.post(url + "/Lin_Comb", json=body)
             print(r.json())
+            
         break
 else:
-    print("Matija & Filip not found")
-    exit(1)
+    print("Anže & Enej not found")
     exit(1)

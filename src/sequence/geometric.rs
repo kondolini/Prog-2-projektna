@@ -4,14 +4,15 @@ use crate::Range;
 
 // Definirajte strukturo Geometric brez Box
 pub struct Geometric {
+    name: String,
     zac_clen: f64,
     kvocient: f64,
 }
 
 impl Geometric {
     // Konstruktor za ustvarjanje novega geometrijskega zaporedja
-    pub fn new(zac_clen: f64, kvocient: f64) -> Geometric {
-        Geometric { zac_clen, kvocient }
+    pub fn new(name: String,zac_clen: f64, kvocient: f64) -> Geometric {
+        Geometric {name, zac_clen, kvocient }
     }
 
     // Metoda za pridobitev k-tega člena zaporedja
@@ -28,6 +29,25 @@ impl Geometric {
             k += range.step;
         }
         result
+    }
+}
+
+
+impl Sequence<f64> for Geometric {
+    fn k_th(&self, k: usize) -> f64 {
+        self.zac_clen * self.kvocient.powi(k as i32)
+    }
+
+    fn name(&self) -> String {
+        self.name.to_string()
+    }
+
+    fn start(&self) -> f64 {
+        self.k_th(0)
+    }
+
+    fn contains(&self, value: f64) -> bool {
+        true
     }
 }
 
