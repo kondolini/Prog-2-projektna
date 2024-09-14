@@ -44,8 +44,22 @@ for j in projects:
                     {"name": "Geometric", "parameters": [2, 3], "sequences": []}
                 ],
             }
-            r = requests.post(url + "/Drop", json=body)
-            print(r.json())            
+            #r = requests.post(url + "/Drop", json=body)
+            #print(r.json())
+            body = {
+                "range": {
+                    "from": j * 10,
+                    "to": (j + 1) * 10,
+                    "step": 1,
+                },
+                "parameters": [],
+                "sequences": [
+                    {"name": "Geometric", "parameters": [2, 3], "sequences": []},
+                    {"name": "Geometric", "parameters": [5, 1], "sequences": []}
+                ],
+            }     
+            r = requests.post(url + "/logaritemski", json=body)
+            print(r.json())     
             
         break
 else:

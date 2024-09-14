@@ -221,6 +221,13 @@ pub fn build_sequence_from_syntax(syntax: &SequenceSyntax) -> Box<dyn Sequence<f
                 syntax.parameters[0] as usize,
             )) 
         },
+        "logaritemski" => { 
+            Box::new(LogSequence::new(
+                syntax.name.clone(),
+                build_sequence_from_syntax(&*syntax.sequences[0]),
+                build_sequence_from_syntax(&*syntax.sequences[1]),
+            )) 
+        }
         _ => panic!("Unknown sequence type: {}", syntax.name),
     }
 }
@@ -312,8 +319,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     let body = collect_body(req).await?;
                                     let request: SequenceRequest = serde_json::from_str(&body).unwrap();
                                     let range = request.range;
-                                
-                                    // Convert the request sequences to concrete types
+
                                     let seq1 = build_sequence_from_syntax(&request.sequences[0]);
                                     let seq2 = build_sequence_from_syntax(&request.sequences[1]);
                                 
@@ -324,8 +330,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         request.parameters[0], 
                                         request.parameters[1],  
                                     );
-                                
-                                    // Return the result as a response
+
                                     Ok(Response::new(full(
                                         serde_json::to_string(&seq.range(range)).unwrap(),
                                     )))
@@ -334,8 +339,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     let body = collect_body(req).await?;
                                     let request: SequenceRequest = serde_json::from_str(&body).unwrap();
                                     let range = request.range;
-                                
-                                    // Convert the request sequences to concrete types
+
                                     let seq1 = build_sequence_from_syntax(&request.sequences[0]);;
                                 
                                     let seq = Drop::new(
@@ -343,8 +347,25 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         seq1,
                                         request.parameters[0] as usize,  
                                     );
+
+                                    Ok(Response::new(full(
+                                        serde_json::to_string(&seq.range(range)).unwrap(),
+                                    )))
+                                }
+                                Some(s) if *s.name == "logaritemski".to_string() => {
+                                    let body = collect_body(req).await?;
+                                    let request: SequenceRequest = serde_json::from_str(&body).unwrap();
+                                    let range = request.range;
+
+                                    let seq1 = build_sequence_from_syntax(&request.sequences[0]);
+                                    let seq2 = build_sequence_from_syntax(&request.sequences[1]);
                                 
-                                    // Return the result as a response
+                                    let seq = LogSequence::new(
+                                        "Lin_Comb".to_string(),
+                                        seq1, 
+                                        seq2,  
+                                    );
+
                                     Ok(Response::new(full(
                                         serde_json::to_string(&seq.range(range)).unwrap(),
                                     )))
