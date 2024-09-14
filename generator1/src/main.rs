@@ -59,6 +59,7 @@ pub struct Range {
     pub step: u64,
 }
 
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SequenceSyntax {
     pub name:  String,
@@ -228,6 +229,16 @@ pub fn build_sequence_from_syntax(syntax: &SequenceSyntax) -> Box<dyn Sequence<f
                 build_sequence_from_syntax(&*syntax.sequences[1]),
             )) 
         }
+        "Operacije" => { 
+            Box::new(OperationSequence::new(
+                syntax.name.clone(),
+                build_sequence_from_syntax(&*syntax.sequences[0]),
+                build_sequence_from_syntax(&*syntax.sequences[1]),
+                build_sequence_from_syntax(&*syntax.sequences[2]),
+                syntax.parameters[0],
+                syntax.parameters[1],
+            )) 
+        }
         _ => panic!("Unknown sequence type: {}", syntax.name),
     }
 }
@@ -361,9 +372,32 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                     let seq2 = build_sequence_from_syntax(&request.sequences[1]);
                                 
                                     let seq = LogSequence::new(
-                                        "Lin_Comb".to_string(),
+                                        "logaritemski".to_string(),
                                         seq1, 
                                         seq2,  
+                                    );
+
+                                    Ok(Response::new(full(
+                                        serde_json::to_string(&seq.range(range)).unwrap(),
+                                    )))
+                                }
+                                Some(s) if *s.name == "Operacije".to_string() => {
+                                    let body = collect_body(req).await?;
+                                    let request: SequenceRequest = serde_json::from_str(&body).unwrap();
+                                    let range = request.range;
+
+                                    let seq1 = build_sequence_from_syntax(&request.sequences[0]);
+                                    let seq2 = build_sequence_from_syntax(&request.sequences[1]);
+                                    let seq3 = build_sequence_from_syntax(&request.sequences[2]);
+                                
+                                    let seq = OperationSequence::new(
+                                        "Operacije".to_string(),
+                                        seq1, 
+                                        seq2,  
+                                        seq3,
+                                        request.parameters[0],
+                                        request.parameters[1]
+
                                     );
 
                                     Ok(Response::new(full(

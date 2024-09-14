@@ -8,31 +8,33 @@ pub enum Operation {
     Divide,
 }
 
-pub struct OperationSequence<'a, S1, S2, S3> {
-    s1: &'a S1,
-    s2: &'a S2,
-    s3: &'a S3,
-    operation: Operation,
+pub struct OperationSequence {
+    name: String,
+    s1: Box<dyn Sequence<f64>>,
+    s2: Box<dyn Sequence<f64>>,
+    s3: Box<dyn Sequence<f64>>,
+    operation: f64,
     c: f64,
 }
 
-impl<'a, S1: Sequence<f64>, S2: Sequence<f64>, S3: Sequence<f64>> OperationSequence<'a, S1, S2, S3> {
-    pub fn new(s1: &'a S1, s2: &'a S2, s3: &'a S3, operation: Operation, c: f64) -> Self {
-        OperationSequence { s1, s2, s3, operation, c }
+impl OperationSequence {
+    pub fn new(name: String,s1:  Box<dyn Sequence<f64>>, s2:Box<dyn Sequence<f64>>, s3:Box<dyn Sequence<f64>>, operation: f64, c: f64) -> Self {
+        OperationSequence { name,s1, s2, s3, operation, c }
     }
 
     fn apply_operation(&self, value1: f64, value2: f64) -> f64 {
         match self.operation {
-            Operation::Add => value1 + value2,
-            Operation::Subtract => value1 - value2,
-            Operation::Multiply => value1 * value2,
-            Operation::Divide => {
+            1. => value1 + value2,
+            2. => value1 - value2,
+            3. => value1 * value2,
+            4. => {
                 if value2 != 0.0 {
                     value1 / value2
                 } else {
                     f64::NAN
                 }
             }
+            _ => value1 + value2
         }
     }
 
@@ -64,3 +66,30 @@ impl<'a, S1: Sequence<f64>, S2: Sequence<f64>, S3: Sequence<f64>> OperationSeque
         result
     }
 }
+
+impl Sequence<f64> for OperationSequence {
+    fn k_th(&self, k: usize) -> f64 {
+        let value_s1 = self.s1.k_th(k);
+        let value_s2 = self.s2.k_th(k);
+        let value_s3 = self.s3.k_th(k);
+
+        let a = self.apply_operation(value_s1, value_s2);
+        let b = self.apply_operation(value_s1, value_s3);
+
+        let diff_a = (a - self.c).abs();
+        let diff_b = (b - self.c).abs();
+
+        if diff_a < diff_b {
+            a
+        } else {
+            b
+        }
+    }
+    fn name(&self) -> String {
+        self.name.to_string()
+    }
+    fn start(&self) -> f64 {
+        self.k_th(0)
+    }
+    }
+

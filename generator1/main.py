@@ -58,9 +58,23 @@ for j in projects:
                     {"name": "Geometric", "parameters": [5, 1], "sequences": []}
                 ],
             }     
-            r = requests.post(url + "/logaritemski", json=body)
-            print(r.json())     
-            
+            #r = requests.post(url + "/logaritemski", json=body)
+            #print(r.json())     
+            body = {
+                "range": {
+                    "from": j * 10,
+                    "to": (j + 1) * 10,
+                    "step": 1,
+                },
+                "parameters": [1, 5],
+                "sequences": [
+                    {"name": "Geometric", "parameters": [2, 3], "sequences": []},
+                    {"name": "Geometric", "parameters": [5, 1], "sequences": []},
+                    {"name": "Geometric", "parameters": [6, 10], "sequences": []}
+                ],
+            }     
+            r = requests.post(url + "/Operacije", json=body)
+            print(r.json())  
         break
 else:
     print("Anže & Enej not found")
