@@ -1,27 +1,23 @@
 use std::f64;
-use std::collections::HashMap;
 use super::models::Sequence;
 use crate::Range;
 
 
-pub struct PowerSequence<'a, S1, S2> {
-    s1: &'a S1,
-    s2: &'a S2,
+pub struct PowerSequence{
+    name: String,
+    seq1: Box<dyn Sequence<f64>>,
+    seq2: Box<dyn Sequence<f64>>,
 }
 
-impl<'a, S1: Sequence<f64>, S2: Sequence<f64>> PowerSequence<'a, S1, S2>
-
+impl PowerSequence
 {
-    pub fn new(s1: &'a S1, s2: &'a S2) -> Self {
-        PowerSequence { s1, s2 }   }
-
-
-
+    pub fn new(name: String, seq1: Box<dyn Sequence<f64>>, seq2:Box<dyn Sequence<f64>>) -> Self {
+        PowerSequence { name, seq1, seq2 }   }
 
 
     pub fn k_th(&self, k: usize) -> f64 {
-        let value_s1 = self.s1.k_th(k);
-        let value_s2 = self.s2.k_th(k);
+        let value_s1 = self.seq1.k_th(k);
+        let value_s2 = self.seq2.k_th(k);
         (value_s1.abs().powf(value_s2)).clamp(-7.0, f64::INFINITY)
     }
 
@@ -33,5 +29,21 @@ impl<'a, S1: Sequence<f64>, S2: Sequence<f64>> PowerSequence<'a, S1, S2>
             k += range.step;
         }
         result
+    }
+}
+
+impl Sequence<f64> for PowerSequence
+{
+    fn k_th(&self, k: usize) -> f64 {
+        let value_s1 = self.seq1.k_th(k);
+        let value_s2 = self.seq2.k_th(k);
+        (value_s1.abs().powf(value_s2)).clamp(-7.0, f64::INFINITY)
+    }
+
+    fn name(&self) -> String {
+        self.name.to_string()
+}
+    fn start(&self) -> f64 {
+        self.k_th(0)
     }
 }

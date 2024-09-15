@@ -239,6 +239,28 @@ pub fn build_sequence_from_syntax(syntax: &SequenceSyntax) -> Box<dyn Sequence<f
                 syntax.parameters[1],
             )) 
         }
+        "potenca" => { 
+            Box::new(PowerSequence::new(
+                syntax.name.clone(),
+                build_sequence_from_syntax(&*syntax.sequences[0]),
+                build_sequence_from_syntax(&*syntax.sequences[1]),
+            )) 
+        }
+        "Product" => { 
+            Box::new(Produkt::new(
+                syntax.name.clone(),
+                build_sequence_from_syntax(&*syntax.sequences[0]),
+                build_sequence_from_syntax(&*syntax.sequences[1]),
+            )) 
+        }
+        "Random" => { 
+            Box::new(ProbabilisticSequence::new(
+                syntax.name.clone(),
+                build_sequence_from_syntax(&*syntax.sequences[0]),
+                build_sequence_from_syntax(&*syntax.sequences[1]),
+                syntax.parameters[0]
+            )) 
+        }
         _ => panic!("Unknown sequence type: {}", syntax.name),
     }
 }
@@ -397,6 +419,62 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                         seq3,
                                         request.parameters[0],
                                         request.parameters[1]
+
+                                    );
+
+                                    Ok(Response::new(full(
+                                        serde_json::to_string(&seq.range(range)).unwrap(),
+                                    )))
+                                }
+                                Some(s) if *s.name == "potenca".to_string() => {
+                                    let body = collect_body(req).await?;
+                                    let request: SequenceRequest = serde_json::from_str(&body).unwrap();
+                                    let range = request.range;
+
+                                    let seq1 = build_sequence_from_syntax(&request.sequences[0]);
+                                    let seq2 = build_sequence_from_syntax(&request.sequences[1]);
+                                                                   
+                                    let seq = PowerSequence::new(
+                                        "potenca".to_string(),
+                                        seq1, 
+                                        seq2,  
+                                        );
+
+                                    Ok(Response::new(full(
+                                        serde_json::to_string(&seq.range(range)).unwrap(),
+                                    )))
+                                }
+                                Some(s) if *s.name == "Product".to_string() => {
+                                    let body = collect_body(req).await?;
+                                    let request: SequenceRequest = serde_json::from_str(&body).unwrap();
+                                    let range = request.range;
+
+                                    let seq1 = build_sequence_from_syntax(&request.sequences[0]);
+                                    let seq2 = build_sequence_from_syntax(&request.sequences[1]);
+                                                                   
+                                    let seq = Produkt::new(
+                                        "Product".to_string(),
+                                        seq1, 
+                                        seq2,  
+                                        );
+
+                                    Ok(Response::new(full(
+                                        serde_json::to_string(&seq.range(range)).unwrap(),
+                                    )))
+                                }
+                                Some(s) if *s.name == "Random".to_string() => {
+                                    let body = collect_body(req).await?;
+                                    let request: SequenceRequest = serde_json::from_str(&body).unwrap();
+                                    let range = request.range;
+
+                                    let seq1 = build_sequence_from_syntax(&request.sequences[0]);
+                                    let seq2 = build_sequence_from_syntax(&request.sequences[1]);
+                                
+                                    let seq = ProbabilisticSequence::new(
+                                        "Operacije".to_string(),
+                                        seq1, 
+                                        seq2,  
+                                        request.parameters[0],
 
                                     );
 

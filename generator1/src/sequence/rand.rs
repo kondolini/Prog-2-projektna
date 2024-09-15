@@ -2,27 +2,28 @@ use rand::{thread_rng, Rng};
 use super::models::Sequence;
 use crate::Range;
 
-pub struct ProbabilisticSequence<'a, S1, S2> {
-    s1: &'a S1,
-    s2: &'a S2,
-    probability: f64,
+pub struct ProbabilisticSequence{
+    name: String,
+    seq1: Box<dyn Sequence<f64>>,
+    seq2: Box<dyn Sequence<f64>>,
+    probability: f64
 }
 
-impl<'a, S1: Sequence<f64>, S2: Sequence<f64>> ProbabilisticSequence<'a, S1, S2> {
-    pub fn new(s1: &'a S1, s2: &'a S2, probability: f64) -> Self {
+impl ProbabilisticSequence {
+    pub fn new(name: String ,seq1:Box<dyn Sequence<f64>>, seq2: Box<dyn Sequence<f64>>, probability: f64) -> Self {
         if probability < 0.0 || probability > 1.0 {
             panic!("Probability must be between 0 and 1.");
         }
-        ProbabilisticSequence { s1, s2, probability }
+        ProbabilisticSequence { name, seq1, seq2, probability}
     }
 
     pub fn k_th(&self, k: usize) -> f64 {
         let mut rng = thread_rng();
         let random: f64 = rng.gen_range(0.0..1.0);
         if random < self.probability {
-            self.s1.k_th(k)
+            self.seq1.k_th(k)
         } else {
-            self.s2.k_th(k)
+            self.seq2.k_th(k)
         }
     }
 
@@ -37,3 +38,22 @@ impl<'a, S1: Sequence<f64>, S2: Sequence<f64>> ProbabilisticSequence<'a, S1, S2>
     }
 }
 
+impl Sequence<f64> for ProbabilisticSequence
+{
+    fn k_th(&self, k: usize) -> f64 {
+        let mut rng = thread_rng();
+        let random: f64 = rng.gen_range(0.0..1.0);
+        if random < self.probability {
+            self.seq1.k_th(k)
+        } else {
+            self.seq2.k_th(k)
+        }
+    }
+
+    fn name(&self) -> String {
+        self.name.to_string()
+}
+    fn start(&self) -> f64 {
+        self.k_th(0)
+    }
+}
