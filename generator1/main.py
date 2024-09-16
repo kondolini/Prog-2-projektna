@@ -118,8 +118,8 @@ for j in projects:
                     {"name": "Geometric", "parameters": [5, 2], "sequences": []}]}
                 ],
             }     
-            r = requests.post(url + "/Random", json=body)
-            print(r.json()) 
+            #r = requests.post(url + "/Random", json=body)
+            #print(r.json()) 
         break
 else:
     print("Anže & Enej not found")

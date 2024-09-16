@@ -3,25 +3,23 @@ use crate::Range;
 
 
 pub struct Constant {
+    name:String,
     vrednost : f64,
 
 }
 
 impl Constant {
-   
-    fn contains(&self, item: f64) -> bool {
-        if item == self.vrednost {
-            true
-        }
-        else {false}
-    }
-    fn k_th(&self, k: u64) -> f64 {
+   pub fn new(name:String, vrednost:f64) -> Constant {
+    Constant{name, vrednost}
+   }
+    
+    pub fn k_th(&self, k: u64) -> f64 {
         self.vrednost
     }
-    fn start(&self) -> f64 {
+    pub fn start(&self) -> f64 {
         self.vrednost
     }
-    fn range(&self, range: Range) -> Vec<f64> {
+    pub fn range(&self, range: Range) -> Vec<f64> {
         let mut result = Vec::new();
         let mut k = range.from;
         while k <= range.to {
@@ -29,6 +27,17 @@ impl Constant {
             k += range.step;
         }
         result
+    }
+}
+impl Sequence<f64> for Constant {
+    fn k_th(&self, _k:usize) -> f64 {
+        self.vrednost
+    }
+    fn name(&self) -> String {
+        self.name.to_string()
+    }
+    fn start(&self) -> f64 {
+        self.vrednost
     }
 }
 

@@ -86,61 +86,69 @@ fn sequences() -> Vec<SequenceInfo> {
     let mut sequences = Vec::new();
     sequences.push(SequenceInfo {
         name: "Arithmetic".to_string(),
-        description: "Arithmetic sequence".to_string(),
+        description: "Aritmetično zaporedje. 1. parameter: začetni člen. 2. parameter: diferenca.".to_string(),
         parameters: 2,
         sequences: 0,
     });
     sequences.push(SequenceInfo {
         name: "Lin_Comb".to_string(),
-        description: "".to_string(),
+        description: "Linearna kombinacija dveh zaporedij. Vzame dva parametra a,b ter dve zaporedji f in g. Iz njiju tvori linearno kombinacijo zaporedij a*f + b*g.
+        1. parameter: a, 2. parameter: b, 1. zaporedje: f. 2. zaporedje: g".to_string(),
         parameters: 2,
         sequences: 2,
     });
     sequences.push(SequenceInfo {
         name: "Constant".to_string(),
-        description: "Constant sequence".to_string(),
+        description: "Konstantno zaporedje. 1. parameter: vrednost".to_string(),
         parameters: 1,
         sequences: 0,
     });
     sequences.push(SequenceInfo {
         name: "Product".to_string(),
-        description: "Product of sequences".to_string(),
+        description: "Produkt dveh zaporedij. Sprejme prvo in drugo zaporedje in na k-tem mestu vrne zmnožek njunih k-tih členov.".to_string(),
         parameters: 0,
         sequences: 2,
     });
     sequences.push(SequenceInfo {
         name: "Geometric".to_string(),
-        description: "Geometric sequence".to_string(),
+        description: "Geometrijsko zaporedje. 1. paramter: začetni člen. 2. parameter: količnik.".to_string(),
         parameters: 2,
         sequences: 0,
     });
     sequences.push(SequenceInfo {
         name: "logaritemski".to_string(),
-        description: "Logarithmic sequence".to_string(),
+        description: "Logaritemsko zaporedje. Sprejme dve zaporedji. Prvo zaporedje vzame za logaritmant,
+        drugega pa za bazo logaritma. Če je logaritem nedefiniran (npr. baza enaka 1, ali negativen logaritmant), vrne tip f64::NAN ".to_string(),
         parameters: 0,
         sequences: 2,
     });
     sequences.push(SequenceInfo {
         name: "potenca".to_string(),
-        description: "Exponential sequence".to_string(),
+        description: "Eksponentno zaporedje. Prvo zaporedje vzame za osnovo, drugega pa za potenco.".to_string(),
         parameters: 0,
         sequences: 2,
     });
     sequences.push(SequenceInfo {
         name: "Operacije".to_string(),
-        description: "Operation sequence".to_string(),
+        description: "Operacijsko zaporedje. Sprejme 3 zaporedja in 2 parametra. 
+        Najprej izračunamo vrednosti prvega in drugega zaporedja ter jih uporabimo v operaciji, ki vrne rezultat a. 
+        Nato izračunamo vrednosti prvega in tretjega zaporedja, ki vrne rezultat b.
+        Nato primerjamo absolutne razlike med a in parametrom c ter med b in parametrom c. Tisti rezultat, ki je bližje parametru c, se izbere kot vrednost trenutnega člena zaporedja.
+        1. zaporedje, 2. zaporedje, 3. zaporedje. 1.parameter: operacija (1 - seštevanje, 2 - odštevanje, 3 - množenje, 4 - deljenje), 2. parameter - c, to je vrednost, s katero bomo primerjali nastale vrednosti in iskali najmanjšo razliko. ".to_string(),
         parameters: 2,
         sequences: 3,
     });
     sequences.push(SequenceInfo {
         name: "Random".to_string(),
-        description: "Random sequence".to_string(),
+        description: "Naključno zaporedje. Sprejme dve zaporedje in en parameter možnosti. Ta parameter naj bo število med 0 in 1 (oboje vključno). Na podlagi izbire parametra
+        bo zaporedje izbiralo med členi prvega in drugega zaporeje. Višja kot je številka, bolj verjetno bo izbiralo člene iz prvega zaporedja. (Primer, če za parameter možnosti izberemo število 1, bo vedno podal samo člene prvega zaporedja,
+        če za parameter izberemo 0, bo izbiral vedno samo člene drugega zaporedja, če pa izberemo število 0.50, bo podajal obe zaporedji približno enako). ".to_string(),
         parameters: 1,
         sequences: 2,
     });
     sequences.push(SequenceInfo {
         name: "Drop".to_string(),
-        description: "Drop sequence".to_string(),
+        description: "Drop sequence. Sprejme zaporedje in parameter. Glede na parameter izpusti prvih toliko členov, kolikšen je parameter.".to_string(),
         parameters: 1,
         sequences: 1,
     });
@@ -204,6 +212,7 @@ async fn register_with_central_register(register_ip: &str, project: &Project) ->
 
 pub fn build_sequence_from_syntax(syntax: &SequenceSyntax) -> Box<dyn Sequence<f64>> {
     match syntax.name.as_str() {
+        "Constant" => Box::new(Constant::new("Constant".to_string(), syntax.parameters[0])),
         "Arithmetic" => Box::new(Arithmetic::new("Arithmetic".to_string(),syntax.parameters[0],syntax.parameters[1])),
         "Geometric" => Box::new(Geometric::new("Geometric".to_string(),syntax.parameters[0], syntax.parameters[1])),
         "Lin_Comb" => { 
@@ -320,6 +329,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 .find(|&x| ("/sequence/".to_string() + &x.name) == r);
                             match sequences {
                                 None => {println!("path not found: {}", r); create_404()},
+                                Some(s) if *s.name == "Constant".to_string() => {
+                                    let body = collect_body(req).await?;
+                                    let request: SequenceRequest =
+                                        serde_json::from_str(&body).unwrap();
+                                    let range = request.range;
+                                    let seq = Constant::new(
+                                        "Constant".to_string(),
+                                        request.parameters[0],
+                                    );
+                                    Ok(Response::new(full(
+                                        serde_json::to_string(&seq.range(range)).unwrap(),
+                                    )))
+                                },
                                 Some(s) if *s.name == "Arithmetic".to_string() => {
                                     let body = collect_body(req).await?;
                                     let request: SequenceRequest =
