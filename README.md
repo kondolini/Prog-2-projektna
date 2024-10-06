@@ -63,3 +63,8 @@ This server application facilitates communication between servers and generates 
 - **Description:** A random sequence. It takes two sequences and one parameter of probability, which should be a number between 0 and 1 (inclusive). Based on the value of this parameter, the sequence will choose between the terms of the first and second sequences. The higher the number, the more likely it will select terms from the first sequence. (For example, if the probability parameter is set to 1, it will always return terms from the first sequence; if set to 0, it will always select terms from the second sequence; if set to 0.50, it will provide terms from both sequences approximately equally.)
 - **Parameters:** 1
 - **Sequences:** 2
+
+## Authors:
+- Enej Brus
+- Anže Gartner
+
