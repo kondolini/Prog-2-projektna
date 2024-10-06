@@ -7,8 +7,8 @@ This server application facilitates communication between servers and generates 
 ## Running the Program
 
 1. Open a terminal and use the **cd** command to navigate to the **register** directory.
-2. Run the server with the command: **cargo run**
-3. If you wish to initiate communication with other servers, open a new terminal, navigate to the **generator1** directory, and run: **cargo run 127.0.0.1 7878**
+2. Run the server with the command: **cargo run**.
+3. If you wish to initiate communication with other servers, open a new terminal, navigate to the **generator1** directory, and run: **cargo run 127.0.0.1 7878**.
 4. If you wish to communicate without the other servers, you can also use the file **main2.py**. Open another terminal, go to **generator1**, and run: **py main2.py**.
 5. Follow the instructions displayed in the terminal for a user-friendly experience.
 
