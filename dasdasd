@@ -1,0 +1,28 @@
+[33mcbfc498[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m urejanje traitov
+[33mf4fc479[m Update README.md slovnični popravki
+[33me89077c[m Update README.md popravki (running the program)
+[33m4951b64[m Update README.md
+[33maa2f6f0[m Update README.md
+[33mbdfc121[m Update README.md project overview
+[33m14e8ce7[m Dodan main2.py kot prijazen uporabniški vmesnik + dodan constant
+[33m494f835[m Dodani vsi sequenci + delajo s Python skripto
+[33mad555f7[m readme
+[33m585254a[m Dodal Operacije + readme razlaga
+[33m874ad18[m logaritemski
+[33m0e36409[m Uredil Drop + Arithmetic
+[33mf604f6e[m Dodana funkcija, ki assertira zaporedja, ki potrebujejo več zaporedij + delujoč lin_comb
+[33m63f86b9[m main.rs doda ";"
+[33m356154a[m V main.py dodal body za Geometric
+[33mf0228e6[m Generator delujoč + komunicira.
+[33m194334f[m zbrisan combined, popravljena constant arithmetic
+[33m5b42979[m dodan komentar
+[33md7b5708[m komentar
+[33mccfa23c[m popravljen, cargo
+[33m926ef98[m cargo lock, cargo toml
+[33m9444e74[m Dodana zaporedja
+[33mc663161[m pull
+[33ma409665[m Merge branch 'main' of https://github.com/kondolini/Prog-2-projektna
+[33m29d2bda[m test
+[33m3359f25[m drugi commit
+[33mf3010be[m prvi_commit
+[33mc19c314[m first commit
