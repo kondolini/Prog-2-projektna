@@ -17,26 +17,7 @@ impl ProbabilisticSequence {
         ProbabilisticSequence { name, seq1, seq2, probability}
     }
 
-    pub fn k_th(&self, k: usize) -> f64 {
-        let mut rng = thread_rng();
-        let random: f64 = rng.gen_range(0.0..1.0);
-        if random < self.probability {
-            self.seq1.k_th(k)
-        } else {
-            self.seq2.k_th(k)
-        }
-    }
-
-    pub fn range(&self, range: Range) -> Vec<f64> {
-        let mut result = Vec::new();
-        let mut k = range.from;
-        while k <= range.to {
-            result.push(self.k_th(k as usize));
-            k += range.step;
-        }
-        result
-    }
-}
+   }
 
 impl Sequence<f64> for ProbabilisticSequence
 {
@@ -48,12 +29,5 @@ impl Sequence<f64> for ProbabilisticSequence
         } else {
             self.seq2.k_th(k)
         }
-    }
-
-    fn name(&self) -> String {
-        self.name.to_string()
-}
-    fn start(&self) -> f64 {
-        self.k_th(0)
     }
 }

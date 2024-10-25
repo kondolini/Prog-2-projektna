@@ -37,34 +37,6 @@ impl OperationSequence {
             _ => value1 + value2
         }
     }
-
-    pub fn k_th(&self, k: usize) -> f64 {
-        let value_s1 = self.s1.k_th(k);
-        let value_s2 = self.s2.k_th(k);
-        let value_s3 = self.s3.k_th(k);
-
-        let a = self.apply_operation(value_s1, value_s2);
-        let b = self.apply_operation(value_s1, value_s3);
-
-        let diff_a = (a - self.c).abs();
-        let diff_b = (b - self.c).abs();
-
-        if diff_a < diff_b {
-            a
-        } else {
-            b
-        }
-    }
-
-    pub fn range(&self, range: Range) -> Vec<f64> {
-        let mut result = Vec::new();
-        let mut k = range.from;
-        while k <= range.to {
-            result.push(self.k_th(k as usize));
-            k += range.step;
-        }
-        result
-    }
 }
 
 impl Sequence<f64> for OperationSequence {
@@ -84,12 +56,6 @@ impl Sequence<f64> for OperationSequence {
         } else {
             b
         }
-    }
-    fn name(&self) -> String {
-        self.name.to_string()
-    }
-    fn start(&self) -> f64 {
-        self.k_th(0)
     }
     }
 
